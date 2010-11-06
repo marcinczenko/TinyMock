@@ -4,7 +4,7 @@ using namespace std;
 
 #include "yaffut.h"
 #include "TinyMocks.h"
-using namespace TinyMocks;
+using namespace TinyMock;
 
 #include "TestMock.h"
 #include "TestNotifier.h"
@@ -17,17 +17,17 @@ public:
 	virtual void log()=0;
 };
 
-class MockLogger : public LoggerInterface, public TinyMocks::Mock
+class MockLogger : public LoggerInterface, public TinyMock::Mock
 {
 public:
 	MockLogger() {}
-	MockLogger(const std::string& className) : TinyMocks::Mock(className) {}
+        MockLogger(const std::string& className) : TinyMock::Mock(className) {}
 	void log()
 	{
-		TinyMocks::Method<void,void,void,void,void> actual("log");
-		TinyMocks::BaseMethod* expected = m_expectations.GetFirstExpectationFor(actual.Signature());
+                TinyMock::Method<void,void,void,void,void> actual("log");
+                TinyMock::BaseMethod* expected = m_expectations.GetFirstExpectationFor(actual.Signature());
 	
-		Handle(expected,(TinyMocks::BaseMethod*)&actual);
+                Handle(expected,(TinyMock::BaseMethod*)&actual);
 	}
 };
 
@@ -45,7 +45,7 @@ private:
 };
 
 
-class StandardNotifier : public TinyMocks::TinyNotifier
+class StandardNotifier : public TinyMock::TinyNotifier
 {
 public:
 	class MockFailureException {};
@@ -61,7 +61,7 @@ public:
 	bool sendWasCalled ;
 };
 
-class YaffutFailureNotifier : public TinyMocks::TinyNotifier
+class YaffutFailureNotifier : public TinyMock::TinyNotifier
 {
 public:	
 	YaffutFailureNotifier() {}
@@ -71,7 +71,7 @@ public:
 	}	
 };
 
-class ExceptionFailureNotifier : public TinyMocks::TinyNotifier
+class ExceptionFailureNotifier : public TinyMock::TinyNotifier
 {
 public:	
 	ExceptionFailureNotifier() {}
@@ -101,7 +101,7 @@ TEST(TestTinyMocks,TestIfANotifierRegisteredWithAnExpectationIsCalled)
 
 	TestMock* testMock = dynamic_cast<TestMock*>(mockRepository.CreateMock<TestMock,ConcreteNotifier>("TestMock"));	
 
-	testMock->RegisterExpectation(new TinyMocks::Method<void,void,void,void,void>("TestMethod")).AddNotifier<ExceptionFailureNotifier>();
+        testMock->RegisterExpectation(new TinyMock::Method<void,void,void,void,void>("TestMethod")).AddNotifier<ExceptionFailureNotifier>();
 
 	try
 	{
@@ -121,7 +121,7 @@ TEST(TestTinyMocks,TestReturningArguments)
 
 	TestMock* testMock = dynamic_cast<TestMock*>(mockRepository.CreateMock<TestMock,YaffutFailureNotifier>("TestMock"));	
 
-	testMock->RegisterExpectation(new TinyMocks::Method<void,void,void,void,int>("TestMethodWithReturnValue",125));
+        testMock->RegisterExpectation(new TinyMock::Method<void,void,void,void,int>("TestMethodWithReturnValue",125));
 
 	EQUAL(125,testMock->TestMethodWithReturnValue());
 
@@ -152,7 +152,7 @@ TEST(TestTinyMocks,TestFailureNotifier)
 
 	TestMock* testMock = dynamic_cast<TestMock*>(mockRepository.CreateMock<TestMock, ExceptionFailureNotifier>("TestMock") );
 
-	testMock->RegisterExpectation(new TinyMocks::Method<int,void,void,void,void>("TestMethodWithAnArgument",argValue));
+        testMock->RegisterExpectation(new TinyMock::Method<int,void,void,void,void>("TestMethodWithAnArgument",argValue));
 
 	try
 	{
@@ -174,8 +174,8 @@ TEST(TestTinyMocks,TestIfFailureNotifierIsCalledOnlyWithTheFirstFailingExpectati
 
 	TestMock* testMock = dynamic_cast<TestMock*>(mockRepository.CreateMock<TestMock, ExceptionFailureNotifier>("TestMock") );
 
-	testMock->RegisterExpectation(new TinyMocks::Method<int,void,void,void,void>("TestMethodWithAnArgument",argValue));
-	testMock->RegisterExpectation(new TinyMocks::Method<int,void,void,void,void>("TestMethodWithAnArgument",argValue));
+        testMock->RegisterExpectation(new TinyMock::Method<int,void,void,void,void>("TestMethodWithAnArgument",argValue));
+        testMock->RegisterExpectation(new TinyMock::Method<int,void,void,void,void>("TestMethodWithAnArgument",argValue));
 
 	try
 	{
@@ -206,7 +206,7 @@ TEST(TestTinyMocks,TestArgumentDereference)
 
 	TestMock* testMock = dynamic_cast<TestMock*>(mockRepository.CreateMock<TestMock, YaffutFailureNotifier>("TestMock") );
 
-	testMock->RegisterExpectation(new TinyMocks::MethodWithDereferencedArguments<ComplexArgument*,void,void,void,void>("TestMethodWithAPointerArgument",&complexArg2));
+        testMock->RegisterExpectation(new TinyMock::MethodWithDereferencedArguments<ComplexArgument*,void,void,void,void>("TestMethodWithAPointerArgument",&complexArg2));
 	
 	testMock->TestMethodWithAPointerArgument(&complexArg);
 
@@ -215,7 +215,7 @@ TEST(TestTinyMocks,TestArgumentDereference)
 
 TEST(TestTinyMocks,SequentialCheckingIfAMethodForWhichAllCallsShouldBeIgnoredIsIgnoredShouldReturnTrue)
 {
-	TinyMocks::IgnoredMethodsContainer ignoredMethodContainer ;
+        TinyMock::IgnoredMethodsContainer ignoredMethodContainer ;
 
 	ignoredMethodContainer.ignoreAll("AMethod") ;
 
@@ -228,7 +228,7 @@ TEST(TestTinyMocks,SequentialCheckingIfAMethodForWhichAllCallsShouldBeIgnoredIsI
 
 TEST(TestTinyMocks,TestIfAMethodWhichWasNotMarkedAsIgnoredWillBeTreatedAsSuch)
 {
-	TinyMocks::IgnoredMethodsContainer ignoredMethodContainer ;	
+        TinyMock::IgnoredMethodsContainer ignoredMethodContainer ;
 	
 	CHECK(!ignoredMethodContainer.isIgnored("AMethod")) ;
 }
@@ -241,7 +241,7 @@ TEST(TestTinyMocks,AsADevelopperIWantToBeAbleToIgnoreAllCallsToACertainMethod)
 
 	testMock->IgnoreAll("TestMethod");
 
-	testMock->RegisterExpectation(new TinyMocks::Method<void,void,void,void,void>("TestMethod")).AddNotifier<YaffutFailureNotifier>();
+        testMock->RegisterExpectation(new TinyMock::Method<void,void,void,void,void>("TestMethod")).AddNotifier<YaffutFailureNotifier>();
 
 	testMock->TestMethod();
 	testMock->TestMethod();
@@ -272,7 +272,7 @@ TEST(TestTinyMocks,IgnoringArgumentsInACallToASpecificMethod)
 	const int doesNotMatter = 0 ;	
 	const int actualArgument = 255 ;
 
-	testMock->RegisterExpectation(new TinyMocks::Method<int,void,void,void,void>("TestMethodWithAnArgument",doesNotMatter)).ignoreArguments();	
+        testMock->RegisterExpectation(new TinyMock::Method<int,void,void,void,void>("TestMethodWithAnArgument",doesNotMatter)).ignoreArguments();
 	
 	testMock->TestMethodWithAnArgument(actualArgument);
 
@@ -289,8 +289,8 @@ TEST(TestTinyMocks,IgnoringArgumentsInACallToASpecificMethodButNotIgnoringThemFo
 	const int expectedArgument = 1 ;
 	const int actualArgument = 255 ;
 
-	testMock->RegisterExpectation(new TinyMocks::Method<int,void,void,void,void>("TestMethodWithAnArgument",doesNotMatter)).ignoreArguments();
-	testMock->RegisterExpectation(new TinyMocks::Method<int,void,void,void,void>("TestMethodWithAnArgument",expectedArgument));
+        testMock->RegisterExpectation(new TinyMock::Method<int,void,void,void,void>("TestMethodWithAnArgument",doesNotMatter)).ignoreArguments();
+        testMock->RegisterExpectation(new TinyMock::Method<int,void,void,void,void>("TestMethodWithAnArgument",expectedArgument));
 
 	try
 	{
@@ -317,7 +317,7 @@ TEST(TestTinyMocks,TestIfAMethodIsCalled)
 {
 	MockRepository<YaffutFailureNotifier> mockRepository;
 	MockLogger* logger = dynamic_cast<MockLogger*>(mockRepository.CreateMock<MockLogger, ExceptionFailureNotifier>("Logger") );
-	logger->RegisterExpectation(new TinyMocks::Method<void,void,void,void,void>("log"));
+        logger->RegisterExpectation(new TinyMock::Method<void,void,void,void,void>("log"));
 
 	OurTestClass testClass(logger) ;
 

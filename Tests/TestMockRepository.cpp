@@ -3,7 +3,7 @@ using namespace std;
 
 #include "yaffut.h"
 #include "TinyMocks.h"
-using namespace TinyMocks;
+using namespace TinyMock;
 
 #include "ConcreteNotifier.h"
 #include "TestMock.h"
@@ -26,11 +26,11 @@ TEST(TestMockRepository,TestCheckingExpectationForAllCreatedMocks)
 	MockRepository<> mockRepository ;	
 
 	Mock* testMock_1 = mockRepository.CreateMock<TestMock,ConcreteNotifier>("TestMock_1");
-	testMock_1->RegisterExpectation(new TinyMocks::Method<void,void,void,void,void>("TestMethod"));
+        testMock_1->RegisterExpectation(new TinyMock::Method<void,void,void,void,void>("TestMethod"));
 
 	const int argValue = 10;	
 	Mock* testMock_2 = mockRepository.CreateMock<TestMock,ConcreteNotifier>("TestMock_2");
-	testMock_2->RegisterExpectation(new TinyMocks::Method<int,void,void,void,void>("TestMethodWithAnArgument",argValue));
+        testMock_2->RegisterExpectation(new TinyMock::Method<int,void,void,void,void>("TestMethodWithAnArgument",argValue));
 
 	mockRepository.verifyAll(failureNotifier);
 
@@ -48,7 +48,7 @@ TEST(TestMockRepository,TestReturningFALSEFromTheVerifyAllMethod)
 	MockRepository<> mockRepository ;	
 
 	Mock* testMock = mockRepository.CreateMock<TestMock,ConcreteNotifier>("TestMock");
-	testMock->RegisterExpectation(new TinyMocks::Method<void,void,void,void,void>("TestMethod"));	
+        testMock->RegisterExpectation(new TinyMock::Method<void,void,void,void,void>("TestMethod"));
 
 	CHECK(!mockRepository.verifyAll());	
 }
@@ -58,7 +58,7 @@ TEST(TestMockRepository,TestReturningTRUEFromTheVerifyAllMethod)
 	MockRepository<> mockRepository ;	
 
 	TestMock* testMock = dynamic_cast<TestMock*>(mockRepository.CreateMock<TestMock,ConcreteNotifier>("TestMock"));
-	testMock->RegisterExpectation(new TinyMocks::Method<void,void,void,void,void>("TestMethod"));
+        testMock->RegisterExpectation(new TinyMock::Method<void,void,void,void,void>("TestMethod"));
 
 	testMock->TestMethod();
 
@@ -70,7 +70,7 @@ TEST(TestMockRepository,TestCheckingIfAGivenExpectationIsNOTSatisfied)
 	MockRepository<> mockRepository ;
 
 	TestMock* testMock = dynamic_cast<TestMock*>(mockRepository.CreateMock<TestMock,ConcreteNotifier>("TestMock"));
-	testMock->RegisterExpectation(new TinyMocks::Method<void,void,void,void,void>("TestMethod"));
+        testMock->RegisterExpectation(new TinyMock::Method<void,void,void,void,void>("TestMethod"));
 
 	CHECK(!mockRepository.verify("TestMock"));
 

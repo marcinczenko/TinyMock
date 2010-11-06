@@ -1,7 +1,7 @@
 #ifndef CONCRETENOTIFIER_H
 #define CONCRETENOTIFIER_H
 
-class ConcreteNotifier : public TinyMocks::TinyNotifier
+class ConcreteNotifier : public TinyMock::TinyNotifier
 {
 public:
 	ConcreteNotifier() : sendWasCalled(false) {}

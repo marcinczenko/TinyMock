@@ -1,7 +1,7 @@
 #include "Test.h"
 #include "TinyMocks.h"
 
-class TestMock : public Test, public TinyMocks::Mock
+class TestMock : public Test, public TinyMock::Mock
 {
 public:    
     TestMock();
