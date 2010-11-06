@@ -1,5 +1,5 @@
 #include "Test.h"
-#include "TinyMocks.h"
+#include "TinyMock.h"
 
 class TestMock : public Test, public TinyMock::Mock
 {

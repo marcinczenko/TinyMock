@@ -2,7 +2,7 @@
 using namespace std;
 
 #include "yaffut.h"
-#include "TinyMocks.h"
+#include "TinyMock.h"
 using namespace TinyMock;
 
 #include "ConcreteNotifier.h"

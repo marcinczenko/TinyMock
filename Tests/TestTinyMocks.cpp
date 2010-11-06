@@ -3,7 +3,7 @@ using namespace std;
 #include <memory>
 
 #include "yaffut.h"
-#include "TinyMocks.h"
+#include "TinyMock.h"
 using namespace TinyMock;
 
 #include "TestMock.h"

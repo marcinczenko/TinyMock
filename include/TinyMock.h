@@ -35,20 +35,6 @@ THE SOFTWARE.
 
 namespace TinyMock {
 
-
-//#define CREATE_MOCK(MockRepositoryPtr,MockType,Notifier,MockName) dynamic_cast<MockType*>(MockRepositoryPtr->CreateMock<MockType,Notifier>(MockName));
-#define CREATE_MOCK(MockRepositoryPtr,MockType,Notifier,MockName) MockRepositoryPtr->CreateMock<MockType,Notifier>(MockName);
-
-//#define CREATE_MOCK_NO_OWNERSHIP(MockRepositoryPtr,MockType,Notifier,MockName) dynamic_cast<MockType*>(MockRepositoryPtr->CreateMockWithoutOwnership<MockType,Notifier>(MockName));
-#define CREATE_MOCK_NO_OWNERSHIP(MockRepositoryPtr,MockType,Notifier,MockName) MockRepositoryPtr->CreateMockWithoutOwnership<MockType,Notifier>(MockName);
-
-//#define CREATE_RT_MOCK(MockRepositoryPtr,MockType,MockName) dynamic_cast<MockType*>(MockRepositoryPtr->CreateRoseRTMock<MockType>(MockName));
-#define CREATE_RT_MOCK(MockRepositoryPtr,MockType,MockName) MockRepositoryPtr->CreateRoseRTMock<MockType>(MockName);
-
-#define CHECK_EXPECTATIONS(mockObject,failureMessage) if(true==mockObject.UnhandledExpectations()) { CPPUNIT_FAIL(failureMessage);}
-#define CHECK_EXPECTATIONS_PTR(mockObjectPtr,failureMessage) if(true==mockObjectPtr->UnhandledExpectations()) { CPPUNIT_FAIL(failureMessage);}
-#define ASSERT_EXPECTATIONS_FAILED(mockObject,failureMessage) if(false==mockObject.UnhandledExpectations()) { CPPUNIT_FAIL(failureMessage);}
-
 class IgnoredMethodsContainer
 {
 public:
