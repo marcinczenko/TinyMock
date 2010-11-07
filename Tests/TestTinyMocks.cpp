@@ -82,24 +82,24 @@ public:
 };
 
 
-struct TestTinyMocks
+struct TestTinyMock
 {
-    TestTinyMocks()
+    TestTinyMock()
     {        
     }
 	
-    ~TestTinyMocks()
+    ~TestTinyMock()
     {        
     }
 };
 
-TEST(TestTinyMocks,TestIfANotifierRegisteredWithAnExpectationIsCalled)
+TEST(TestTinyMock,TestIfANotifierRegisteredWithAnExpectationIsCalled)
 {
 	ConcreteNotifier notifier ;
 
 	MockRepository<YaffutFailureNotifier> mockRepository ;
 
-	TestMock* testMock = dynamic_cast<TestMock*>(mockRepository.CreateMock<TestMock,ConcreteNotifier>("TestMock"));	
+        TestMock* testMock = mockRepository.CreateMock<TestMock,ConcreteNotifier>("TestMock");
 
         testMock->RegisterExpectation(new TinyMock::Method<void,void,void,void,void>("TestMethod")).AddNotifier<ExceptionFailureNotifier>();
 
@@ -115,11 +115,11 @@ TEST(TestTinyMocks,TestIfANotifierRegisteredWithAnExpectationIsCalled)
 	FAIL("");
 }
 
-TEST(TestTinyMocks,TestReturningArguments)
+TEST(TestTinyMock,TestReturningArguments)
 {	
 	MockRepository<YaffutFailureNotifier> mockRepository ;
 
-	TestMock* testMock = dynamic_cast<TestMock*>(mockRepository.CreateMock<TestMock,YaffutFailureNotifier>("TestMock"));	
+        TestMock* testMock = mockRepository.CreateMock<TestMock,YaffutFailureNotifier>("TestMock");
 
         testMock->RegisterExpectation(new TinyMock::Method<void,void,void,void,int>("TestMethodWithReturnValue",125));
 
@@ -144,13 +144,13 @@ TEST(TestTinyMocks,TestReturningArguments)
 //	}
 //}
 
-TEST(TestTinyMocks,TestFailureNotifier)
+TEST(TestTinyMock,TestFailureNotifier)
 {
 	const int argValue = 25 ;
 
 	MockRepository<YaffutFailureNotifier> mockRepository;
 
-	TestMock* testMock = dynamic_cast<TestMock*>(mockRepository.CreateMock<TestMock, ExceptionFailureNotifier>("TestMock") );
+        TestMock* testMock = mockRepository.CreateMock<TestMock, ExceptionFailureNotifier>("TestMock");
 
         testMock->RegisterExpectation(new TinyMock::Method<int,void,void,void,void>("TestMethodWithAnArgument",argValue));
 
@@ -166,13 +166,13 @@ TEST(TestTinyMocks,TestFailureNotifier)
 	FAIL("");
 }
 
-TEST(TestTinyMocks,TestIfFailureNotifierIsCalledOnlyWithTheFirstFailingExpectation)
+TEST(TestTinyMock,TestIfFailureNotifierIsCalledOnlyWithTheFirstFailingExpectation)
 {
 	const int argValue = 25 ;
 
 	MockRepository<YaffutFailureNotifier> mockRepository;
 
-	TestMock* testMock = dynamic_cast<TestMock*>(mockRepository.CreateMock<TestMock, ExceptionFailureNotifier>("TestMock") );
+        TestMock* testMock = mockRepository.CreateMock<TestMock, ExceptionFailureNotifier>("TestMock");
 
         testMock->RegisterExpectation(new TinyMock::Method<int,void,void,void,void>("TestMethodWithAnArgument",argValue));
         testMock->RegisterExpectation(new TinyMock::Method<int,void,void,void,void>("TestMethodWithAnArgument",argValue));
@@ -197,14 +197,14 @@ TEST(TestTinyMocks,TestIfFailureNotifierIsCalledOnlyWithTheFirstFailingExpectati
 	FAIL("");
 }
 
-TEST(TestTinyMocks,TestArgumentDereference)
+TEST(TestTinyMock,TestArgumentDereference)
 {
-    ComplexArgument complexArg(151) ;	
+        ComplexArgument complexArg(151) ;
 	ComplexArgument complexArg2(151) ;		
 
 	MockRepository<YaffutFailureNotifier> mockRepository;
 
-	TestMock* testMock = dynamic_cast<TestMock*>(mockRepository.CreateMock<TestMock, YaffutFailureNotifier>("TestMock") );
+        TestMock* testMock = mockRepository.CreateMock<TestMock, YaffutFailureNotifier>("TestMock");
 
         testMock->RegisterExpectation(new TinyMock::MethodWithDereferencedArguments<ComplexArgument*,void,void,void,void>("TestMethodWithAPointerArgument",&complexArg2));
 	
@@ -213,7 +213,7 @@ TEST(TestTinyMocks,TestArgumentDereference)
 	mockRepository.verifyAll();
 }
 
-TEST(TestTinyMocks,SequentialCheckingIfAMethodForWhichAllCallsShouldBeIgnoredIsIgnoredShouldReturnTrue)
+TEST(TestTinyMock,SequentialCheckingIfAMethodForWhichAllCallsShouldBeIgnoredIsIgnoredShouldReturnTrue)
 {
         TinyMock::IgnoredMethodsContainer ignoredMethodContainer ;
 
@@ -226,18 +226,18 @@ TEST(TestTinyMocks,SequentialCheckingIfAMethodForWhichAllCallsShouldBeIgnoredIsI
 	CHECK(ignoredMethodContainer.isIgnored("AMethod")) ;
 }
 
-TEST(TestTinyMocks,TestIfAMethodWhichWasNotMarkedAsIgnoredWillBeTreatedAsSuch)
+TEST(TestTinyMock,TestIfAMethodWhichWasNotMarkedAsIgnoredWillBeTreatedAsSuch)
 {
         TinyMock::IgnoredMethodsContainer ignoredMethodContainer ;
 	
 	CHECK(!ignoredMethodContainer.isIgnored("AMethod")) ;
 }
 
-TEST(TestTinyMocks,AsADevelopperIWantToBeAbleToIgnoreAllCallsToACertainMethod)
+TEST(TestTinyMock,AsADevelopperIWantToBeAbleToIgnoreAllCallsToACertainMethod)
 {
 	MockRepository<YaffutFailureNotifier> mockRepository;
 
-	TestMock* testMock = dynamic_cast<TestMock*>(mockRepository.CreateMock<TestMock, YaffutFailureNotifier>("TestMock") );
+        TestMock* testMock = mockRepository.CreateMock<TestMock, YaffutFailureNotifier>("TestMock");
 
 	testMock->IgnoreAll("TestMethod");
 
@@ -249,11 +249,11 @@ TEST(TestTinyMocks,AsADevelopperIWantToBeAbleToIgnoreAllCallsToACertainMethod)
 	mockRepository.verifyAll();
 }
 
-TEST(TestTinyMocks,WhenIgnoringAllCallsToAMethodYouDoNotNeedToRegisterExpectationForThisMethodCall)
+TEST(TestTinyMock,WhenIgnoringAllCallsToAMethodYouDoNotNeedToRegisterExpectationForThisMethodCall)
 {
 	MockRepository<YaffutFailureNotifier> mockRepository;
 
-	TestMock* testMock = dynamic_cast<TestMock*>(mockRepository.CreateMock<TestMock, YaffutFailureNotifier>("TestMock") );
+        TestMock* testMock = mockRepository.CreateMock<TestMock, YaffutFailureNotifier>("TestMock");
 
 	testMock->IgnoreAll("TestMethod");	
 
@@ -263,11 +263,11 @@ TEST(TestTinyMocks,WhenIgnoringAllCallsToAMethodYouDoNotNeedToRegisterExpectatio
 	mockRepository.verifyAll();
 }
 
-TEST(TestTinyMocks,IgnoringArgumentsInACallToASpecificMethod)
+TEST(TestTinyMock,IgnoringArgumentsInACallToASpecificMethod)
 {
 	MockRepository<YaffutFailureNotifier> mockRepository;
 
-	TestMock* testMock = dynamic_cast<TestMock*>(mockRepository.CreateMock<TestMock, YaffutFailureNotifier>("TestMock") );
+        TestMock* testMock = mockRepository.CreateMock<TestMock, YaffutFailureNotifier>("TestMock");
 
 	const int doesNotMatter = 0 ;	
 	const int actualArgument = 255 ;
@@ -279,11 +279,11 @@ TEST(TestTinyMocks,IgnoringArgumentsInACallToASpecificMethod)
 	mockRepository.verifyAll();
 }
 
-TEST(TestTinyMocks,IgnoringArgumentsInACallToASpecificMethodButNotIgnoringThemForTheSubsequentCalls)
+TEST(TestTinyMock,IgnoringArgumentsInACallToASpecificMethodButNotIgnoringThemForTheSubsequentCalls)
 {
 	MockRepository<YaffutFailureNotifier> mockRepository;
 
-	TestMock* testMock = dynamic_cast<TestMock*>(mockRepository.CreateMock<TestMock, ExceptionFailureNotifier>("TestMock") );
+        TestMock* testMock = mockRepository.CreateMock<TestMock, ExceptionFailureNotifier>("TestMock");
 
 	const int doesNotMatter = 0 ;
 	const int expectedArgument = 1 ;
@@ -313,10 +313,10 @@ TEST(TestTinyMocks,IgnoringArgumentsInACallToASpecificMethodButNotIgnoringThemFo
 	FAIL("");	
 }
 
-TEST(TestTinyMocks,TestIfAMethodIsCalled)
+TEST(TestTinyMock,TestIfAMethodIsCalled)
 {
 	MockRepository<YaffutFailureNotifier> mockRepository;
-	MockLogger* logger = dynamic_cast<MockLogger*>(mockRepository.CreateMock<MockLogger, ExceptionFailureNotifier>("Logger") );
+        MockLogger* logger = mockRepository.CreateMock<MockLogger, ExceptionFailureNotifier>("Logger") ;
         logger->RegisterExpectation(new TinyMock::Method<void,void,void,void,void>("log"));
 
 	OurTestClass testClass(logger) ;
@@ -325,8 +325,6 @@ TEST(TestTinyMocks,TestIfAMethodIsCalled)
 
 	mockRepository.verifyAll();
 }
-
-
 
 /*
 TEST(TestTinyMocks,AsADevelopperIWantToBeAbleToIgnoreASpecificCallSoThatICanSaveSomeTimeWritingPreciseExpectationForThisCall)
@@ -350,25 +348,25 @@ TEST(TestTinyMocks,AsADevelopperIWantToBeAbleToIgnoreTheSelectedMethodArgument)
 {
 }
 
-TEST(TestTinyMocks,AsADevelopperIWantToBeAbleToUseTheDefaultNotifierSoThatIDoNotHaveToRegisterItEveryTime)
+TEST(TestTinyMock,AsADevelopperIWantToBeAbleToUseTheDefaultNotifierSoThatIDoNotHaveToRegisterItEveryTime)
 {
 }
 */
 
-//TEST(TestTinyMocks,TestBoostSharedPointers)
+//TEST(TestTinyMock,TestBoostSharedPointers)
 //{
 //	std::tr1::shared_ptr<ConcreteNotifier> concreteNotifierPtr(new ConcreteNotifier());
 //	//boost::shared_ptr<ConcreteNotifier> concreteNotifierPtr(new ConcreteNotifier());
 //}
 
 
-//TEST(TestTinyMocks,TestWithoutIgnoringArguments)
+//TEST(TestTinyMock,TestWithoutIgnoringArguments)
 //{
 //	TestMock testMock("TestMock");
 //
 //	ComplexArgument arg ;	
 //
-//	testMock.RegisterExpectation(new TinyMocks::Method<const ComplexArgument&,void,void,void,void>("TestMethod",arg));	
+//	testMock.RegisterExpectation(new TinyMock::Method<const ComplexArgument&,void,void,void,void>("TestMethod",arg));
 //
 //	testMock.TestMethodWithAnArgument(arg);
 //
