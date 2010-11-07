@@ -128,22 +128,6 @@ TEST(TestTinyMock,TestReturningArguments)
 	mockRepository.verifyAll();
 }
 
-//TEST(TestTinyMocks,TestIgnoringArguments)
-//{
-//	TestMock testMock("TestMock");	
-//
-//	ArgumentWithoutEqualityOperator arg ;	
-//
-//	testMock.RegisterExpectation(new TinyMocks::MethodIgnoringArguments<void>("TestMethodWithAnArgument"));
-//
-//	testMock.TestMethodWithAnArgument(arg);
-//
-//	if(testMock.UnhandledExpectations())
-//	{
-//		FAIL("");
-//	}
-//}
-
 TEST(TestTinyMock,TestFailureNotifier)
 {
 	const int argValue = 25 ;
@@ -325,53 +309,3 @@ TEST(TestTinyMock,TestIfAMethodIsCalled)
 
 	mockRepository.verifyAll();
 }
-
-/*
-TEST(TestTinyMocks,AsADevelopperIWantToBeAbleToIgnoreASpecificCallSoThatICanSaveSomeTimeWritingPreciseExpectationForThisCall)
-{
-}
-
-
-TEST(TestTinyMocks,AsADevelopperIWantToBeAbleToIgnoreTheFirstCallToACertainMethod)
-{
-}
-
-TEST(TestTinyMocks,AsADevelopperIWantToBeAbleToIgnoreTheFirstNCallsToACertainMethod)
-{
-}
-
-TEST(TestTinyMocks,AsADevelopperIWantToBeAbleToIgnoreAllTheMethodArguments)
-{
-}
-
-TEST(TestTinyMocks,AsADevelopperIWantToBeAbleToIgnoreTheSelectedMethodArgument)
-{
-}
-
-TEST(TestTinyMock,AsADevelopperIWantToBeAbleToUseTheDefaultNotifierSoThatIDoNotHaveToRegisterItEveryTime)
-{
-}
-*/
-
-//TEST(TestTinyMock,TestBoostSharedPointers)
-//{
-//	std::tr1::shared_ptr<ConcreteNotifier> concreteNotifierPtr(new ConcreteNotifier());
-//	//boost::shared_ptr<ConcreteNotifier> concreteNotifierPtr(new ConcreteNotifier());
-//}
-
-
-//TEST(TestTinyMock,TestWithoutIgnoringArguments)
-//{
-//	TestMock testMock("TestMock");
-//
-//	ComplexArgument arg ;	
-//
-//	testMock.RegisterExpectation(new TinyMock::Method<const ComplexArgument&,void,void,void,void>("TestMethod",arg));
-//
-//	testMock.TestMethodWithAnArgument(arg);
-//
-//	if(testMock.UnhandledExpectations())
-//	{
-//		FAIL("");
-//	}
-//}
