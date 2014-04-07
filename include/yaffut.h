@@ -8,6 +8,9 @@
 
 #ifdef __GNUC__
 #include <cxxabi.h>
+// required for getpid()
+#include <sys/types.h>
+#include <unistd.h>
 #elif _MSC_VER
 #pragma warning (disable: 4786)
 #endif
@@ -20,8 +23,6 @@
 #include <stdexcept>
 
 namespace yaffut {
-
-
 
 std::string const version = "1.0";
     
@@ -75,24 +76,10 @@ private:
       && s.substr (0, name.length ()) == name;
   }
 public:
-  static bool AlreadyThrown ; 
   ~Factory(){}
-  static bool& CanThrow()
-  {
-	  static bool m_canThrow = true ;
-	  return m_canThrow ;
-  }
-  
-  static void SetCanThrow(bool canThrow)
-  {
-	  bool& m_canThrow = CanThrow() ;
-	  m_canThrow = canThrow ;
-  }
-  
   static Factory& Instance()
   {
     static Factory instance;
-    
     return instance;
   }
   void Register(const std::string& name, Create_t create)
@@ -131,9 +118,8 @@ public:
         }
         catch(const std::exception& e)
         {
-          std::cout << " [FAIL]\n" << e.what() << std::flush;
+          std::cout << " [FAIL]\n  " << e.what() << std::flush;
           ++m_fail;
-          SetCanThrow(true);
         }
         catch(...)
         {
@@ -153,7 +139,7 @@ public:
       std::cout << "[FAIL](" << m_fail << '/' << size << ")" << std::endl;
   }
   int Main (int argc, const char* argv[])
-  {	
+  {
     if(argc > 1
        && (std::string(argv[1]) == "-h" || std::string(argv[1]) == "--help"))
     {
@@ -243,29 +229,6 @@ public:
     os << at << expr;
     failure_ = os.str();
   }
-  template <typename Expected, typename Actual>
-  static void ThrowAndRemember(const Expected& e, Actual& a, const char* at = "", const char* expr = "")
-  {    
-    Factory::SetCanThrow(false);
-    throw failure(e,a,at,expr);
-  }
-  static void ThrowAndRemember(const char* at = "", const char* expr = "")
-  {   
-    Factory::SetCanThrow(false);
-    throw failure(at,expr);
-  }
-  //static void ThrowFailureSafe(const Expected& e, Actual& a, const char* at = "", const char* expr = "")
-  //{
-  //  if(!Factory::CanThrow()) return;
-  //  Factory::SetCanThrow(false);
-  //  throw failure(e,a,at,expr);
-  //}
-  static void ThrowFailureSafe(const char* at = "", const char* expr = "")
-  {
-    if(!Factory::CanThrow()) return;
-    Factory::SetCanThrow(false);
-    throw failure(at,expr);
-  }
   virtual ~failure() throw() {}
   virtual const char* what() const throw() { return failure_.c_str(); }
 };
@@ -338,38 +301,30 @@ inline void equal(const Expected& e, const Actual& a, const char* at = "", const
 {
   if(e != a)
   {
-      failure::ThrowAndRemember(e,a,at,expr);
-    //throw failure(e, a, at, expr);
+    throw failure(e, a, at, expr);
   }
 }
 inline void equal(const char* e, const char* a, const char* at = "", const char* expr = "")
 {
   if(std::string(e) != std::string(a))
   {
-      failure::ThrowAndRemember(e,a,at,expr);
-    //throw failure(e, a, at, expr);
+    throw failure(e, a, at, expr);
   }
 }
 inline void equal(double e, double a, const char* at = "", const char* expr = "")
 {
-#ifdef _STD_AFX
-  double max = std::abs(max(e, a));
-#else
   double max = std::abs(std::max(e, a));
-#endif
   max = max < 1.0 ? 1.0 : max;
   if(std::abs(e - a) > std::numeric_limits<double>::epsilon() * max)
   {
-      failure::ThrowAndRemember(e,a,at,expr);
-    //throw failure(e, a, at, expr);
+    throw failure(e, a, at, expr);
   }
 }
 inline void check(bool b, const char* at = "", const char* expr = "")
 { 
   if(!b)
   {
-      failure::ThrowAndRemember(at,expr);
-    //throw failure(at, expr);
+    throw failure(at, expr);
   }
 }
 
@@ -378,85 +333,40 @@ inline void unequal(const Expected& e, const Actual& a, const char* at = "", con
 {
   if(e == a)
   {
-      failure::ThrowAndRemember(e,a,at,expr);
-    //throw failure(e, a, at, expr);
+    throw failure(e, a, at, expr);
   }
 }
 inline void unequal(const char* e, const char* a, const char* at = "", const char* expr = "")
 {
   if(std::string(e) == std::string(a))
   {
-      failure::ThrowAndRemember(e,a,at,expr);
-    //throw failure(e, a, at, expr);
+    throw failure(e, a, at, expr);
   }
 }
 inline void unequal(double e, double a, const char* at = "", const char* expr = "")
 {
-#ifdef _STD_AFX
-  double max = std::abs(max(e, a));
-#else
   double max = std::abs(std::max(e, a));
-#endif  
   max = max < 1.0 ? 1.0 : max;
   if(std::abs(e - a) <= std::numeric_limits<double>::epsilon() * max)
-  {      
-      failure::ThrowAndRemember(e,a,at,expr);
-    //throw failure(e, a, at, expr);
+  {
+    throw failure(e, a, at, expr);
   }
 }
 template <typename T>
 void fail(const T& expr, const char* at = "")
 {
-  //if(!Factory::CanThrow())
-	 // return ;
-  //Factory::SetCanThrow(false);
   std::ostringstream os;
   os << expr;
-  failure::ThrowAndRemember(at, os.str().c_str());
-  //throw failure(at, os.str().c_str());
+  throw failure(at, os.str().c_str());
 }
-
-template <typename T>
-void failDoubleThrowProtected(const T& expr, const char* at = "")
-{
-  std::ostringstream os;
-  os << expr;
-  failure::ThrowFailureSafe(at, os.str().c_str()); 
-}
-
-//#define DOUBLE_THROW_PROTECTION_BLOCK  \
-//    if(!Factory::CanThrow()) return; \
-//    Factory::SetCanThrow(false);
-
-//#define THROW_SAFE_0() \
-//    DOUBLE_THROW_PROTECTION_BLOCK \
-//    throw failure();
-
-//#define THROW_SAFE_1(at) \
-//    DOUBLE_THROW_PROTECTION_BLOCK \
-//    throw failure(at);
-
-//#define THROW_SAFE(e,a) \
-//    DOUBLE_THROW_PROTECTION_BLOCK \
-//    throw failure(e,a);
-
-//#define THROW_SAFE(e,a,at) \
-//    DOUBLE_THROW_PROTECTION_BLOCK \
-//    throw failure(e,a,at);
-
-//#define THROW_SAFE(e,a,at,expr) \
-//    DOUBLE_THROW_PROTECTION_BLOCK \
-//    throw failure(e,a,at,expr);
 
 template <typename E, typename T>
 void assert_throw(const T& functor, const char* at = "")
 {
   try
   {
-    functor();    
-    Factory::SetCanThrow(true);
-    failure::ThrowAndRemember(at, " statement failed to throw");
-    //throw failure (at, " statement failed to throw");
+    functor();
+    throw failure (at, " statement failed to throw");
   }
   catch(const E&){}
 }
@@ -467,9 +377,7 @@ void assert_throw(void(*pf)(), const char* at = "")
   try
   {
     (*pf)();
-    Factory::SetCanThrow(true);
-    failure::ThrowAndRemember(at, " statement failed to throw");
-    //throw failure (at, " statement failed to throw");
+    throw failure (at, " statement failed to throw");
   }
   catch(const E&){}
 }
@@ -480,9 +388,7 @@ void assert_throw(T* pt, void(T::*mf)(), const char* at = "")
   try
   {
     (pt->*mf)();
-    Factory::SetCanThrow(true);
-    failure::ThrowAndRemember(at, " statement failed to throw");
-    //throw yaffut::failure (at, "statement failed to throw");
+    throw yaffut::failure (at, "statement failed to throw");
   }
   catch(const E&){}
 }
@@ -506,8 +412,6 @@ main (int argc, const char* argv[])
 
 #define YAFFUT_STRINGIZE(x) YAFFUT_STRINGIZE_(x)
 #define YAFFUT_STRINGIZE_(x) #x
-
-//#define __YAFFUT_AT__ __FILE__ ":" YAFFUT_STRINGIZE(__LINE__)": "
 
 #ifdef __GNUC__
 #define __YAFFUT_AT__ __FILE__ ":" YAFFUT_STRINGIZE(__LINE__)": "
@@ -545,9 +449,7 @@ main (int argc, const char* argv[])
   try \
   { \
     s; \
-    Factory::SetCanThrow(true); \
-    failure::ThrowAndRemember(__YAFFUT_AT__,  #s " failed to throw"); \
-    /*throw yaffut::failure (__YAFFUT_AT__,  #s " failed to throw");*/ \
+    throw yaffut::failure (__YAFFUT_AT__,  #s " failed to throw"); \
   } \
   catch(const e&){}
 #ifndef ASSERT_THROW
@@ -558,8 +460,8 @@ main (int argc, const char* argv[])
 #include <iostream>
 int main(int argc, const char* argv[])
 {
-  return yaffut::main (argc, argv);
-}
+  return yaffut::main (argc, argv);  
+};
 #endif /* YAFFUT_MAIN */
 
 #endif
